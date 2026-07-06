@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>玉成山东公司 · 2026年6月业务看板</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+  :root {
+    --bg: #0b1121;
+    --card-bg: #111b2e;
+    --card-bg-2: #162036;
+    --border: #1e2d4a;
+    --primary: #3b82f6;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #06b6d4;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+  }
+  .header .sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi-card.c1::before { background: var(--primary); }
+  .kpi-card.c2::before { background: var(--success); }
+  .kpi-card.c3::before { background: var(--warning); }
+  .kpi-card.c4::before { background: var(--info); }
+  .kpi-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .kpi-card.c1 .kpi-value { color: #60a5fa; }
+  .kpi-card.c2 .kpi-value { color: #34d399; }
+  .kpi-card.c3 .kpi-value { color: #fbbf24; }
+  .kpi-card.c4 .kpi-value { color: #22d3ee; }
+  .kpi-sub { font-size: 12px; color: var(--text-dim); display: flex; gap: 12px; }
+  .kpi-sub .up { color: var(--success); }
+  .kpi-sub .down { color: var(--danger); }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .panel-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot-blue { background: var(--primary); }
+  .dot-green { background: var(--success); }
+  .dot-yellow { background: var(--warning); }
+  .dot-cyan { background: var(--info); }
+  .chart { width: 100%; height: 260px; }
+  .chart-lg { height: 320px; }
+  .mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .mini-table th, .mini-table td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .mini-table th {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .mini-table td { color: var(--text); }
+  .mini-table .num { font-family: "SF Mono", Monaco, monospace; text-align: right; }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .tag-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .tag-red { background: rgba(239,68,68,0.15); color: #f87171; }
+  .tag-yellow { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .flex-between .label { color: var(--text-muted); }
+  .flex-between .value { font-weight: 600; }
+  @media (max-width: 1200px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .bottom-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+    .kpi-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>玉成山东公司 · 业务运营看板</h1>
+  <div class="sub">数据周期：2026年1月 — 6月 | 报告月份：2026年6月</div>
+</div>
+
+<!-- KPI 卡片 -->
+<div class="kpi-row">
+  <div class="kpi-card c1">
+    <div class="kpi-label">6月回收重量</div>
+    <div class="kpi-value">3,505.22<span style="font-size:16px">吨</span></div>
+    <div class="kpi-sub">
+      <span>计划 1,500 吨</span>
+      <span class="up">↑ 233.68%</span>
+    </div>
+  </div>
+  <div class="kpi-card c2">
+    <div class="kpi-label">6月拆解吨位</div>
+    <div class="kpi-value">2,686.80<span style="font-size:16px">吨</span></div>
+    <div class="kpi-sub">
+      <span>计划 2,170 吨</span>
+      <span class="up">↑ 123.82%</span>
+    </div>
+  </div>
+  <div class="kpi-card c3">
+    <div class="kpi-label">1-6月回用件销售产出</div>
+    <div class="kpi-value">1,518.13<span style="font-size:16px">元/吨</span></div>
+    <div class="kpi-sub">
+      <span>回用件销售 1,581.52万</span>
+      <span>回收重量 10,417.52吨</span>
+    </div>
+  </div>
+  <div class="kpi-card c4">
+    <div class="kpi-label">1-6月有色销售重量占比</div>
+    <div class="kpi-value">3.32<span style="font-size:16px">%</span></div>
+    <div class="kpi-sub">
+      <span>有色销售重量 302.73吨</span>
+      <span>拆解重量 9,125.15吨</span>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- 回收趋势 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-blue"></span>回收业务 · 月度趋势</div>
+    <div id="chart-recycle" class="chart chart-lg"></div>
+  </div>
+
+  <!-- 业务员排名 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-blue"></span>回收业务 · 业务员累计完成率</div>
+    <div id="chart-salesperson" class="chart"></div>
+    <table class="mini-table" style="margin-top:8px">
+      <thead><tr><th>业务员</th><th class="num">年计划</th><th class="num">累计</th><th class="num">完成率</th></tr></thead>
+      <tbody>
+        <tr><td>公司资源</td><td class="num">1,800</td><td class="num">1,880.43</td><td class="num"><span class="tag tag-green">104.47%</span></td></tr>
+        <tr><td>平飞艳</td><td class="num">1,070</td><td class="num">936.72</td><td class="num"><span class="tag tag-yellow">87.54%</span></td></tr>
+        <tr><td>张纪科</td><td class="num">1,185</td><td class="num">998.96</td><td class="num"><span class="tag tag-yellow">84.30%</span></td></tr>
+        <tr><td>徐道华</td><td class="num">1,232</td><td class="num">1,007.46</td><td class="num"><span class="tag tag-yellow">81.77%</span></td></tr>
+        <tr><td>赵浩</td><td class="num">1,038</td><td class="num">677.80</td><td class="num"><span class="tag tag-red">65.30%</span></td></tr>
+        <tr><td>张超</td><td class="num">1,100</td><td class="num">704.77</td><td class="num"><span class="tag tag-red">64.07%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 季度回收 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-blue"></span>回收业务 · 季度达成</div>
+    <div id="chart-quarter" class="chart"></div>
+    <div style="margin-top:12px">
+      <div class="flex-between">
+        <span class="label">一季度</span>
+        <span class="value">计划 3,259.4 吨 / 实际 <span style="color:#4ade80">3,770.11</span> 吨</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
+      <div class="flex-between" style="margin-top:10px">
+        <span class="label">二季度</span>
+        <span class="value">计划 5,049.8 吨 / 实际 <span style="color:#4ade80">6,391.58</span> 吨</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
+      <div style="margin-top:14px; padding:12px; background:var(--card-bg-2); border-radius:8px; font-size:13px; color:var(--text-muted)">
+        <div>上半年累计：<strong style="color:#e2e8f0">10,161.69 吨</strong></div>
+        <div style="margin-top:4px">全年计划：<strong style="color:#e2e8f0">18,760 吨</strong></div>
+        <div style="margin-top:4px">年度进度：<strong style="color:#4ade80">54.17%</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- 销售分类 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 1-6月分类销售额</div>
+    <div id="chart-sales-pie" class="chart chart-lg"></div>
+  </div>
+
+  <!-- 销售柱状图 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 分类销售额 TOP10</div>
+    <div id="chart-sales-bar" class="chart chart-lg"></div>
+  </div>
+
+  <!-- 拆解车辆类型 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-green"></span>拆解业务 · 车辆类型分布</div>
+    <div id="chart-vehicle" class="chart"></div>
+    <div style="margin-top:8px">
+      <div class="flex-between">
+        <span class="label">小车</span>
+        <span class="value">55.94%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:55.94%;background:#60a5fa"></div></div>
+      <div class="flex-between" style="margin-top:8px">
+        <span class="label">CD类车</span>
+        <span class="value">37.46%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:37.46%;background:#f472b6"></div></div>
+      <div class="flex-between" style="margin-top:8px">
+        <span class="label">面包车</span>
+        <span class="value">5.19%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:5.19%;background:#34d399"></div></div>
+      <div class="flex-between" style="margin-top:8px">
+        <span class="label">农机</span>
+        <span class="value">1.41%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:1.41%;background:#fbbf24"></div></div>
+    </div>
+    <div style="margin-top:14px; padding:12px; background:var(--card-bg-2); border-radius:8px; font-size:13px">
+      <div class="flex-between" style="margin-bottom:6px">
+        <span class="label">1-6月拆解车辆回收成本</span>
+        <span class="value" style="color:#fbbf24">3,496.96 万</span>
+      </div>
+      <div class="flex-between" style="margin-bottom:6px">
+        <span class="label">1-6月拆解销售收入</span>
+        <span class="value" style="color:#34d399">4,244.05 万</span>
+      </div>
+      <div class="flex-between">
+        <span class="label">毛利</span>
+        <span class="value" style="color:#60a5fa">747.09 万</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-grid">
+  <!-- 拆解趋势 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-green"></span>拆解业务 · 月度趋势</div>
+    <div id="chart-dismantle" class="chart chart-lg"></div>
+  </div>
+
+  <!-- 财务核心指标 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-cyan"></span>财务指标 · 1-6月核心数据</div>
+    <div id="chart-financial" class="chart chart-lg"></div>
+  </div>
+</div>
+
+<script>
+// ================= 回收月度趋势 =================
+const recycleChart = echarts.init(document.getElementById('chart-recycle'));
+recycleChart.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' } },
+  legend: { data: ['计划回收', '实际回收', '完成率'], textStyle: { color: '#94a3b8' }, top: 0 },
+  grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+  xAxis: { type: 'category', data: ['1月','2月','3月','4月','5月','6月'], axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  yAxis: [
+    { type: 'value', name: '吨', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+    { type: 'value', name: '完成率', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { show: false }, axisLabel: { color: '#64748b', formatter: '{value}%' } }
+  ],
+  series: [
+    { name: '计划回收', type: 'bar', barWidth: '25%', itemStyle: { color: '#3b82f6', opacity: 0.6 }, data: [1260, 690, 1485, 1500, 1560, 3110] },
+    { name: '实际回收', type: 'bar', barWidth: '25%', itemStyle: { color: '#22c55e' }, data: [1520.46, 635.06, 1614.60, 1466.47, 1557.55, 3367.56] },
+    { name: '完成率', type: 'line', yAxisIndex: 1, smooth: true, itemStyle: { color: '#fbbf24' }, lineStyle: { width: 3 }, data: [120.67, 92.04, 108.73, 97.76, 99.84, 108.28] }
+  ]
+});
+
+// ================= 业务员排名 =================
+const spChart = echarts.init(document.getElementById('chart-salesperson'));
+spChart.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, formatter: '{b}: {c}%' },
+  grid: { left: '3%', right: '8%', bottom: '3%', top: '5%', containLabel: true },
+  xAxis: { type: 'value', max: 110, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b', formatter: '{value}%' } },
+  yAxis: { type: 'category', data: ['张睿','张超','赵浩','徐道华','张纪科','平飞艳','公司资源'], axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  series: [{
+    type: 'bar', barWidth: 16,
+    data: [
+      { value: 30.56, itemStyle: { color: '#ef4444' } },
+      { value: 64.07, itemStyle: { color: '#ef4444' } },
+      { value: 65.30, itemStyle: { color: '#ef4444' } },
+      { value: 81.77, itemStyle: { color: '#f59e0b' } },
+      { value: 84.30, itemStyle: { color: '#f59e0b' } },
+      { value: 87.54, itemStyle: { color: '#f59e0b' } },
+      { value: 104.47, itemStyle: { color: '#22c55e' } }
+    ],
+    label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c}%' }
+  }]
+});
+
+// ================= 季度达成 =================
+const qChart = echarts.init(document.getElementById('chart-quarter'));
+qChart.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' } },
+  legend: { data: ['计划', '实际'], textStyle: { color: '#94a3b8' }, top: 0 },
+  grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+  xAxis: { type: 'category', data: ['一季度','二季度','三季度','四季度'], axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  yAxis: { type: 'value', name: '吨', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+  series: [
+    { name: '计划', type: 'bar', barWidth: '30%', itemStyle: { color: '#3b82f6', opacity: 0.6 }, data: [3259.4, 5049.8, 5640, 4810.8] },
+    { name: '实际', type: 'bar', barWidth: '30%', itemStyle: { color: '#22c55e' }, data: [3770.11, 6391.58, 0, 0] },
+    { name: '完成率', type: 'line', smooth: true, itemStyle: { color: '#fbbf24' }, lineStyle: { width: 3 }, data: [115.67, 126.57, 0, 0] }
+  ]
+});
+
+// ================= 销售分类饼图 =================
+const salesPieChart = echarts.init(document.getElementById('chart-sales-pie'));
+const salesData = [
+  { value: 1087.29, name: '废钢' },
+  { value: 1025.48, name: '发动机新能源' },
+  { value: 562.14, name: '常规线下' },
+  { value: 403.54, name: '废铝/有色' },
+  { value: 385.45, name: '废铜' },
+  { value: 330.85, name: '三元' },
+  { value: 170.79, name: '精品小件' },
+  { value: 122.50, name: '非金属' },
+  { value: 84.33, name: '危废' },
+  { value: 66.44, name: '常规线上' },
+  { value: 5.23, name: '垃圾' }
+];
+salesPieChart.setOption({
+  tooltip: { trigger: 'item', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, formatter: '{b}: {c}万 ({d}%)' },
+  legend: { type: 'scroll', orient: 'vertical', right: 0, top: 20, bottom: 20, textStyle: { color: '#94a3b8', fontSize: 11 } },
+  series: [{
+    type: 'pie', radius: ['40%', '70%'], center: ['35%', '50%'],
+    avoidLabelOverlap: true,
+    itemStyle: { borderRadius: 6, borderColor: '#111b2e', borderWidth: 2 },
+    label: { show: false },
+    emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#e2e8f0' } },
+    data: salesData.map((d, i) => {
+      const colors = ['#f59e0b','#ef4444','#3b82f6','#8b5cf6','#06b6d4','#22c55e','#ec4899','#14b8a6','#64748b','#f97316','#a3a3a3'];
+      return { value: d.value, name: d.name, itemStyle: { color: colors[i % colors.length] } };
+    })
+  }]
+});
+
+// ================= 销售柱状图 TOP10 =================
+const salesBarChart = echarts.init(document.getElementById('chart-sales-bar'));
+const salesBarData = salesData.sort((a,b) => b.value - a.value);
+salesBarChart.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' } },
+  grid: { left: '3%', right: '8%', bottom: '3%', top: '5%', containLabel: true },
+  xAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+  yAxis: { type: 'category', data: salesBarData.map(d => d.name), axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  series: [{
+    type: 'bar', barWidth: 18,
+    data: salesBarData.map((d, i) => {
+      const colors = ['#f59e0b','#ef4444','#3b82f6','#8b5cf6','#06b6d4','#22c55e','#ec4899','#14b8a6','#64748b','#f97316','#a3a3a3'];
+      return { value: d.value, itemStyle: { color: colors[i % colors.length], borderRadius: [0, 4, 4, 0] } };
+    }),
+    label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c} 万' }
+  }]
+});
+
+// ================= 车辆类型分布 =================
+const vehicleChart = echarts.init(document.getElementById('chart-vehicle'));
+vehicleChart.setOption({
+  tooltip: { trigger: 'item', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' } },
+  series: [{
+    type: 'pie', radius: ['30%', '65%'], center: ['50%', '50%'],
+    roseType: 'radius',
+    itemStyle: { borderRadius: 5, borderColor: '#111b2e', borderWidth: 2 },
+    label: { color: '#94a3b8' },
+    data: [
+      { value: 5103.68, name: '小车', itemStyle: { color: '#60a5fa' } },
+      { value: 3417.41, name: 'CD类车', itemStyle: { color: '#f472b6' } },
+      { value: 473.74, name: '面包车', itemStyle: { color: '#34d399' } },
+      { value: 129.00, name: '农机', itemStyle: { color: '#fbbf24' } }
+    ]
+  }]
+});
+
+// ================= 拆解月度趋势 =================
+const dismantleChart = echarts.init(document.getElementById('chart-dismantle'));
+dismantleChart.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' } },
+  legend: { data: ['计划拆解', '实际拆解', '完成率'], textStyle: { color: '#94a3b8' }, top: 0 },
+  grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+  xAxis: { type: 'category', data: ['1月','2月','3月','4月','5月','6月'], axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  yAxis: [
+    { type: 'value', name: '吨', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+    { type: 'value', name: '完成率', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { show: false }, axisLabel: { color: '#64748b', formatter: '{value}%' } }
+  ],
+  series: [
+    { name: '计划拆解', type: 'bar', barWidth: '25%', itemStyle: { color: '#3b82f6', opacity: 0.6 }, data: [1802, 250, 1770, 1870, 1520, 2170] },
+    { name: '实际拆解', type: 'bar', barWidth: '25%', itemStyle: { color: '#22c55e' }, data: [1564.18, 245.98, 1625.92, 1626.97, 1375.30, 2686.80] },
+    { name: '完成率', type: 'line', yAxisIndex: 1, smooth: true, itemStyle: { color: '#fbbf24' }, lineStyle: { width: 3 }, data: [86.80, 98.39, 91.86, 87.00, 90.48, 123.82] }
+  ]
+});
+
+// ================= 财务核心指标 =================
+const finChart = echarts.init(document.getElementById('chart-financial'));
+finChart.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' } },
+  legend: { data: ['计划', '实际'], textStyle: { color: '#94a3b8' }, top: 0 },
+  grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+  xAxis: { type: 'category', data: ['主营收入','主营成本','主营费用','税金','主营利润','管理费用','固定费用','财务费用','营业利润'], axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8', fontSize: 11, rotate: 15 } },
+  yAxis: { type: 'value', name: '万元', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+  series: [
+    { name: '计划', type: 'bar', barWidth: '30%', itemStyle: { color: '#3b82f6', opacity: 0.6, borderRadius: [4,4,0,0] }, data: [3084.75, 2590.40, 42.47, 9.25, 442.62, 208.63, 145.20, 0, 88.79] },
+    { name: '实际', type: 'bar', barWidth: '30%', itemStyle: { color: '#22c55e', borderRadius: [4,4,0,0] }, data: [3446.85, 2995.15, 24.10, 10.62, 416.99, 123.18, 143.97, 0.83, 149.01] }
+  ]
+});
+
+window.addEventListener('resize', () => {
+  recycleChart.resize();
+  spChart.resize();
+  qChart.resize();
+  salesPieChart.resize();
+  salesBarChart.resize();
+  vehicleChart.resize();
+  dismantleChart.resize();
+  finChart.resize();
+});
+</script>
+
+</body>
+</html>
