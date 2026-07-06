@@ -332,9 +332,10 @@
     <div id="chart-dismantle" class="chart chart-lg"></div>
   </div>
 
-  <!-- 各业务拆解费用 -->
+  <!-- 拆解费用分布 -->
   <div class="panel">
-    <div class="panel-title"><span class="dot dot-cyan"></span>各业务拆解费用 · 1-6月核心数据</div>
+    <div class="panel-title"><span class="dot dot-cyan"></span>拆解费用分布（1-6月）</div>
+    <div style="text-align:center;font-size:13px;color:#94a3b8;margin-bottom:8px">单吨成本构成（元/吨）</div>
     <div id="chart-financial" class="chart chart-lg"></div>
   </div>
 </div>
@@ -480,18 +481,26 @@ dismantleChart.setOption({
   ]
 });
 
-// ================= 财务核心指标 =================
+// ================= 拆解费用分布 =================
 const finChart = echarts.init(document.getElementById('chart-financial'));
 finChart.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' } },
-  legend: { data: ['计划', '实际'], textStyle: { color: '#94a3b8' }, top: 0 },
-  grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
-  xAxis: { type: 'category', data: ['主营收入','主营成本','主营费用','税金','主营利润','管理费用','固定费用','财务费用','营业利润'], axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8', fontSize: 11, rotate: 15 } },
-  yAxis: { type: 'value', name: '万元', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
-  series: [
-    { name: '计划', type: 'bar', barWidth: '30%', itemStyle: { color: '#3b82f6', opacity: 0.6, borderRadius: [4,4,0,0] }, data: [3084.75, 2590.40, 42.47, 9.25, 442.62, 208.63, 145.20, 0, 88.79] },
-    { name: '实际', type: 'bar', barWidth: '30%', itemStyle: { color: '#22c55e', borderRadius: [4,4,0,0] }, data: [3446.85, 2995.15, 24.10, 10.62, 416.99, 123.18, 143.97, 0.83, 149.01] }
-  ]
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' }, formatter: '{b}: {c} 元/吨' },
+  grid: { left: '3%', right: '12%', bottom: '3%', top: '5%', containLabel: true },
+  xAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+  yAxis: { type: 'category', data: ['扒胎费', '销售装车费', '大宗装车费', '预处理', '销售精拆', '派工单拆解'], axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  series: [{
+    type: 'bar', barWidth: 20,
+    itemStyle: { color: '#3b82f6', borderRadius: [0, 4, 4, 0] },
+    data: [
+      { value: 5.9 },
+      { value: 8.5 },
+      { value: 11.1 },
+      { value: 13.0 },
+      { value: 30.4 },
+      { value: 146.9 }
+    ],
+    label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c}' }
+  }]
 });
 
 window.addEventListener('resize', () => {
