@@ -270,15 +270,48 @@
 </div>
 
 <div class="grid">
-  <!-- 销售分类 -->
+  <!-- 各品类销售明细 -->
   <div class="panel">
-    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 1-6月分类销售额</div>
-    <div id="chart-sales-pie" class="chart chart-lg"></div>
+    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 各品类销售明细（1-6月）</div>
+    <div style="overflow-x:auto;max-height:420px;overflow-y:auto">
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>品类</th>
+            <th class="num">销售额(万)</th>
+            <th class="num">销售占比</th>
+            <th class="num">重量(吨)</th>
+            <th class="num">重量占比</th>
+            <th class="num">销售产出(元/吨)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>废钢</td><td class="num">1,087.29</td><td class="num">26.05%</td><td class="num">5,743.37</td><td class="num">59.54%</td><td class="num">1,893.12</td></tr>
+          <tr><td>发动机新能源</td><td class="num">1,025.48</td><td class="num">24.57%</td><td class="num">1,310.83</td><td class="num">13.59%</td><td class="num">7,823.17</td></tr>
+          <tr><td>常规线下</td><td class="num">562.14</td><td class="num">13.47%</td><td class="num">737.24</td><td class="num">7.64%</td><td class="num">7,624.94</td></tr>
+          <tr><td>废铝/有色</td><td class="num">403.54</td><td class="num">9.67%</td><td class="num">222.79</td><td class="num">2.31%</td><td class="num">18,112.97</td></tr>
+          <tr><td>废铜</td><td class="num">385.45</td><td class="num">9.23%</td><td class="num">79.94</td><td class="num">0.83%</td><td class="num">48,220.72</td></tr>
+          <tr><td>三元</td><td class="num">330.85</td><td class="num">7.92%</td><td class="num">20.07</td><td class="num">0.21%</td><td class="num">164,848.31</td></tr>
+          <tr><td>精品小件</td><td class="num">170.79</td><td class="num">4.09%</td><td class="num">277.65</td><td class="num">2.88%</td><td class="num">6,151.19</td></tr>
+          <tr><td>非金属</td><td class="num">122.50</td><td class="num">2.93%</td><td class="num">576.32</td><td class="num">5.97%</td><td class="num">2,125.62</td></tr>
+          <tr><td>危废</td><td class="num">84.33</td><td class="num">2.02%</td><td class="num">119.20</td><td class="num">1.24%</td><td class="num">7,074.44</td></tr>
+          <tr><td>常规线上</td><td class="num">66.44</td><td class="num">1.59%</td><td class="num">35.66</td><td class="num">0.37%</td><td class="num">18,633.36</td></tr>
+          <tr><td>垃圾</td><td class="num">5.23</td><td class="num">0.13%</td><td class="num">522.90</td><td class="num">5.42%</td><td class="num">100.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px; padding:12px; background:var(--card-bg-2); border-radius:8px; font-size:13px">
+      <div style="display:flex; justify-content:space-between; color:var(--text-muted)">
+        <span>销售总额：<strong style="color:#e2e8f0">4,244.05 万</strong></span>
+        <span>销售总重：<strong style="color:#e2e8f0">9,645.97 吨</strong></span>
+        <span>加权平均产出：<strong style="color:#e2e8f0">4,399.68 元/吨</strong></span>
+      </div>
+    </div>
   </div>
 
-  <!-- 销售柱状图 -->
+  <!-- 销售重量占比与产出 -->
   <div class="panel">
-    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 分类销售额 TOP10</div>
+    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 各品类重量占比与销售产出</div>
     <div id="chart-sales-bar" class="chart chart-lg"></div>
   </div>
 
@@ -396,53 +429,53 @@ qChart.setOption({
   ]
 });
 
-// ================= 销售分类饼图 =================
-const salesPieChart = echarts.init(document.getElementById('chart-sales-pie'));
-const salesData = [
-  { value: 1087.29, name: '废钢' },
-  { value: 1025.48, name: '发动机新能源' },
-  { value: 562.14, name: '常规线下' },
-  { value: 403.54, name: '废铝/有色' },
-  { value: 385.45, name: '废铜' },
-  { value: 330.85, name: '三元' },
-  { value: 170.79, name: '精品小件' },
-  { value: 122.50, name: '非金属' },
-  { value: 84.33, name: '危废' },
-  { value: 66.44, name: '常规线上' },
-  { value: 5.23, name: '垃圾' }
-];
-salesPieChart.setOption({
-  tooltip: { trigger: 'item', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, formatter: '{b}: {c}万 ({d}%)' },
-  legend: { type: 'scroll', orient: 'vertical', right: 0, top: 20, bottom: 20, textStyle: { color: '#94a3b8', fontSize: 11 } },
-  series: [{
-    type: 'pie', radius: ['40%', '70%'], center: ['35%', '50%'],
-    avoidLabelOverlap: true,
-    itemStyle: { borderRadius: 6, borderColor: '#111b2e', borderWidth: 2 },
-    label: { show: false },
-    emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#e2e8f0' } },
-    data: salesData.map((d, i) => {
-      const colors = ['#f59e0b','#ef4444','#3b82f6','#8b5cf6','#06b6d4','#22c55e','#ec4899','#14b8a6','#64748b','#f97316','#a3a3a3'];
-      return { value: d.value, name: d.name, itemStyle: { color: colors[i % colors.length] } };
-    })
-  }]
-});
-
-// ================= 销售柱状图 TOP10 =================
+// ================= 销售重量占比与销售产出 =================
 const salesBarChart = echarts.init(document.getElementById('chart-sales-bar'));
-const salesBarData = salesData.sort((a,b) => b.value - a.value);
+const salesWeightData = [
+  { name: '废钢', weightRatio: 59.54, output: 1893.12 },
+  { name: '发动机新能源', weightRatio: 13.59, output: 7823.17 },
+  { name: '常规线下', weightRatio: 7.64, output: 7624.94 },
+  { name: '非金属', weightRatio: 5.97, output: 2125.62 },
+  { name: '垃圾', weightRatio: 5.42, output: 100.00 },
+  { name: '精品小件', weightRatio: 2.88, output: 6151.19 },
+  { name: '废铝/有色', weightRatio: 2.31, output: 18112.97 },
+  { name: '危废', weightRatio: 1.24, output: 7074.44 },
+  { name: '废铜', weightRatio: 0.83, output: 48220.72 },
+  { name: '常规线上', weightRatio: 0.37, output: 18633.36 },
+  { name: '三元', weightRatio: 0.21, output: 164848.31 }
+];
+// 按重量占比排序
+salesWeightData.sort((a, b) => a.weightRatio - b.weightRatio);
 salesBarChart.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' } },
-  grid: { left: '3%', right: '8%', bottom: '3%', top: '5%', containLabel: true },
-  xAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
-  yAxis: { type: 'category', data: salesBarData.map(d => d.name), axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
-  series: [{
-    type: 'bar', barWidth: 18,
-    data: salesBarData.map((d, i) => {
-      const colors = ['#f59e0b','#ef4444','#3b82f6','#8b5cf6','#06b6d4','#22c55e','#ec4899','#14b8a6','#64748b','#f97316','#a3a3a3'];
-      return { value: d.value, itemStyle: { color: colors[i % colors.length], borderRadius: [0, 4, 4, 0] } };
-    }),
-    label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c} 万' }
-  }]
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' }, formatter: function(params) {
+    let result = params[0].name + '<br/>';
+    params.forEach(p => {
+      if (p.seriesName === '重量占比') result += p.marker + ' 重量占比: ' + p.value + '%<br/>';
+      if (p.seriesName === '销售产出') result += p.marker + ' 销售产出: ' + p.value.toLocaleString() + ' 元/吨<br/>';
+    });
+    return result;
+  } },
+  legend: { data: ['重量占比', '销售产出'], textStyle: { color: '#94a3b8' }, top: 0 },
+  grid: { left: '3%', right: '12%', bottom: '3%', top: '12%', containLabel: true },
+  xAxis: [
+    { type: 'value', name: '占比(%)', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+    { type: 'value', name: '产出(元/吨)', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { show: false }, axisLabel: { color: '#64748b', formatter: (v) => v >= 10000 ? (v/10000).toFixed(1) + '万' : v } }
+  ],
+  yAxis: { type: 'category', data: salesWeightData.map(d => d.name), axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  series: [
+    {
+      name: '重量占比', type: 'bar', barWidth: 16, xAxisIndex: 0,
+      itemStyle: { color: '#3b82f6', borderRadius: [0, 4, 4, 0] },
+      data: salesWeightData.map(d => d.weightRatio),
+      label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c}%' }
+    },
+    {
+      name: '销售产出', type: 'line', xAxisIndex: 1, smooth: true,
+      itemStyle: { color: '#fbbf24' }, lineStyle: { width: 3 },
+      symbol: 'circle', symbolSize: 6,
+      data: salesWeightData.map(d => d.output)
+    }
+  ]
 });
 
 // ================= 车辆类型分布 =================
@@ -507,7 +540,6 @@ window.addEventListener('resize', () => {
   recycleChart.resize();
   spChart.resize();
   qChart.resize();
-  salesPieChart.resize();
   salesBarChart.resize();
   vehicleChart.resize();
   dismantleChart.resize();
