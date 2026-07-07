@@ -276,6 +276,12 @@
     <div id="chart-sales-pie" class="chart chart-lg"></div>
   </div>
 
+  <!-- 销售柱状图 -->
+  <div class="panel">
+    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 分类销售额 TOP10</div>
+    <div id="chart-sales-bar" class="chart chart-lg"></div>
+  </div>
+
   <!-- 拆解车辆类型 -->
   <div class="panel">
     <div class="panel-title"><span class="dot dot-green"></span>拆解业务 · 车辆类型分布</div>
@@ -315,31 +321,6 @@
         <span class="label">毛利</span>
         <span class="value" style="color:#60a5fa">747.09 万</span>
       </div>
-    </div>
-  </div>
-
-  <!-- 销售重量占比与产出 + 常规回用件明细 -->
-  <div class="panel">
-    <div class="panel-title"><span class="dot dot-yellow"></span>销售业务 · 各品类重量占比与销售产出</div>
-    <div id="chart-sales-bar" class="chart chart-lg"></div>
-    <div style="margin-top:12px">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)">常规回用件 · 各品类明细</div>
-      <table class="mini-table">
-        <thead><tr><th>品名</th><th class="num">销售额(万)</th><th class="num">销售单价(元/件)</th><th class="num">销售产出(元/吨)</th></tr></thead>
-        <tbody>
-          <tr><td>外观件-车门</td><td class="num">208.58</td><td class="num">212.88</td><td class="num">9,415.07</td></tr>
-          <tr><td>电器件</td><td class="num">135.64</td><td class="num">62.19</td><td class="num">24,562.84</td></tr>
-          <tr><td>外观件-车身</td><td class="num">89.28</td><td class="num">220.18</td><td class="num">9,106.85</td></tr>
-          <tr><td>精品发动机</td><td class="num">83.70</td><td class="num">430.31</td><td class="num">4,548.50</td></tr>
-          <tr><td>外观件-轮胎</td><td class="num">48.58</td><td class="num">55.14</td><td class="num">3,780.07</td></tr>
-          <tr><td>电器件-新能源</td><td class="num">28.09</td><td class="num">198.97</td><td class="num">19,314.05</td></tr>
-          <tr><td>外观件-内饰</td><td class="num">17.67</td><td class="num">240.69</td><td class="num">9,388.85</td></tr>
-          <tr><td>成套配件</td><td class="num">9.77</td><td class="num">5.42</td><td class="num">5,421.66</td></tr>
-          <tr><td>外观件-罐体</td><td class="num">0.91</td><td class="num">100.44</td><td class="num">1,904.17</td></tr>
-          <tr><td>外观件-液压系统</td><td class="num">0.36</td><td class="num">1,200.00</td><td class="num">2,706.77</td></tr>
-          <tr><td>摩托车配件</td><td class="num">0.03</td><td class="num">160.00</td><td class="num">72,727.27</td></tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -446,53 +427,22 @@ salesPieChart.setOption({
   }]
 });
 
-// ================= 销售重量占比与销售产出 =================
+// ================= 销售柱状图 TOP10 =================
 const salesBarChart = echarts.init(document.getElementById('chart-sales-bar'));
-const salesWeightData = [
-  { name: '废钢', weightRatio: 59.54, output: 1893.12 },
-  { name: '发动机新能源', weightRatio: 13.59, output: 7823.17 },
-  { name: '常规线下', weightRatio: 7.64, output: 7624.94 },
-  { name: '非金属', weightRatio: 5.97, output: 2125.62 },
-  { name: '垃圾', weightRatio: 5.42, output: 100.00 },
-  { name: '精品小件', weightRatio: 2.88, output: 6151.19 },
-  { name: '废铝/有色', weightRatio: 2.31, output: 18112.97 },
-  { name: '危废', weightRatio: 1.24, output: 7074.44 },
-  { name: '废铜', weightRatio: 0.83, output: 48220.72 },
-  { name: '常规线上', weightRatio: 0.37, output: 18633.36 },
-  { name: '三元', weightRatio: 0.21, output: 164848.31 }
-];
-// 按重量占比排序
-salesWeightData.sort((a, b) => a.weightRatio - b.weightRatio);
+const salesBarData = salesData.sort((a,b) => b.value - a.value);
 salesBarChart.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' }, formatter: function(params) {
-    let result = params[0].name + '<br/>';
-    params.forEach(p => {
-      if (p.seriesName === '重量占比') result += p.marker + ' 重量占比: ' + p.value + '%<br/>';
-      if (p.seriesName === '销售产出') result += p.marker + ' 销售产出: ' + p.value.toLocaleString() + ' 元/吨<br/>';
-    });
-    return result;
-  } },
-  legend: { data: ['重量占比', '销售产出'], textStyle: { color: '#94a3b8' }, top: 0 },
-  grid: { left: '3%', right: '12%', bottom: '3%', top: '12%', containLabel: true },
-  xAxis: [
-    { type: 'value', name: '占比(%)', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
-    { type: 'value', name: '产出(元/吨)', nameTextStyle: { color: '#64748b' }, axisLine: { show: false }, splitLine: { show: false }, axisLabel: { color: '#64748b', formatter: (v) => v >= 10000 ? (v/10000).toFixed(1) + '万' : v } }
-  ],
-  yAxis: { type: 'category', data: salesWeightData.map(d => d.name), axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
-  series: [
-    {
-      name: '重量占比', type: 'bar', barWidth: 16, xAxisIndex: 0,
-      itemStyle: { color: '#3b82f6', borderRadius: [0, 4, 4, 0] },
-      data: salesWeightData.map(d => d.weightRatio),
-      label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c}%' }
-    },
-    {
-      name: '销售产出', type: 'line', xAxisIndex: 1, smooth: true,
-      itemStyle: { color: '#fbbf24' }, lineStyle: { width: 3 },
-      symbol: 'circle', symbolSize: 6,
-      data: salesWeightData.map(d => d.output)
-    }
-  ]
+  tooltip: { trigger: 'axis', backgroundColor: '#111b2e', borderColor: '#1e2d4a', textStyle: { color: '#e2e8f0' }, axisPointer: { type: 'shadow' } },
+  grid: { left: '3%', right: '8%', bottom: '3%', top: '5%', containLabel: true },
+  xAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#64748b' } },
+  yAxis: { type: 'category', data: salesBarData.map(d => d.name), axisLine: { lineStyle: { color: '#1e2d4a' } }, axisLabel: { color: '#94a3b8' } },
+  series: [{
+    type: 'bar', barWidth: 18,
+    data: salesBarData.map((d, i) => {
+      const colors = ['#f59e0b','#ef4444','#3b82f6','#8b5cf6','#06b6d4','#22c55e','#ec4899','#14b8a6','#64748b','#f97316','#a3a3a3'];
+      return { value: d.value, itemStyle: { color: colors[i % colors.length], borderRadius: [0, 4, 4, 0] } };
+    }),
+    label: { show: true, position: 'right', color: '#e2e8f0', formatter: '{c} 万' }
+  }]
 });
 
 // ================= 车辆类型分布 =================
